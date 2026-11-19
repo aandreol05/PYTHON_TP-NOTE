@@ -101,4 +101,60 @@ class Graphe :
         return texte.strip()
 
 
+def from_files(chemin) :
+    """Lis un fichier texte et retourne un graphe"""
+
+    graphe = Graphe()
+
+    # ouverture du fichier 
+    try :
+        fichier = open(chemin, "r", encoding="utf-8")
+        lignes = fichier.readlines()
+        fichier.close
+    except FileNotFoundError :
+        raise FileNotFoundError(f"Le fichier {chemin} n'existe pas")
+
+    # on enleve les ligne vide 
+    lignes_propres = []
+    for ligne in lignes :
+        if ligne.strip() != "" :
+            lignes_propres.appends(ligne.strip())
+
+    if len(lignes_propres) == 0 :
+        raise ValueError(f"Le fichier {chemin} est vide")
+
+    # lecture de la premiere ligne 
+    premiere_ligne = lignes_propres[0]
+    if not premiere_ligne.startswith("Sommets:") :
+        raise ValueError("La première ligne doit commencer par 'Sommets:'")
+
+    # on enlève Sommets: et on dcoupe le reste à partir de la virgule 
+    texte_sommets = premiere_ligne[8:]
+    liste_sommets = texte_sommets.split(",")
+
+    for nom in liste_sommets :
+        graphe.ajouter_sommet(nom)
+
+    # lecture des lignes suivantes, les arcs avec l'origine, la destination et le poids
+    for ligne in lignes_propres[1:] :
+        morceaux = ligne.split(";")
+        if len(morceaux) != 3 :
+            raise ValueError(f"Ligne mal formé : {ligne}, il manque une donnée")
+
+        origine = morceaux[0]
+        destination = morceaux[1]
+        poids_1 = morceaux[2]
+
+        # on vérifie que le poids est bien un nombre 
+        try :
+            poids = float(poids_1)
+        except :
+            raise ValueError(f"Le poids : {poids_1} n'est pas un nombre")
+
+        # on ajoute l'arc qui vérifie les sommets et que le poids est conforme
+        graphe.ajouter_arc(origine, destination, poids)
+
+    return graphe
+
+
 
