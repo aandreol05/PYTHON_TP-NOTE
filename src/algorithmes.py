@@ -15,19 +15,82 @@ def obtenir_predecesseur(graphe, sommet) :
     predecesseurs = []
     # on parcour tous les autres sommets du graphe pour savoir si il y en a un qui pontent vers notre sommet
     for autre_sommet in graphe.obtenir_sommet() :
-         if graphe.contient_arc(autre_sommet, sommet) :
-              predecesseurs.append(autre_sommet)
+        if graphe.contient_arc(autre_sommet, sommet) :
+            predecesseurs.append(autre_sommet)
 
     return predecesseurs
 
 def degre_sortant(graphe, sommet) :
-     """retourn le nombre d'arc successeur"""
-     return len(obtenir_successeur(graphe, sommet))
+    """retourn le nombre d'arc successeur"""
+    return len(obtenir_successeur(graphe, sommet))
 
 def degre_entrant(graphe, sommet) :
-     """retourn le nombre d'arc predecesseur"""
-     return len(obtenir_predecesseur(graphe, sommet))
+    """retourn le nombre d'arc predecesseur"""
+    return len(obtenir_predecesseur(graphe, sommet))
 
 def degre_total(graphe, sommet) :
-     """retourne la somme degre entrant et sortant"""
-     return degre_sortant(graphe, sommet) + degre_entrant(graphe, sommet) 
+    """retourne la somme degre entrant et sortant"""
+    return degre_sortant(graphe, sommet) + degre_entrant(graphe, sommet) 
+
+def shortest_path(graphe, depart, arrivee) :
+    """calcul le chemin le plus court entre déépart et arrivée
+    retourne un tuple : liste du chemin et cout total"""
+    if not graphe.contient_sommet(depart) :
+        raise ValueError(f"Le sommet : {depart} n'esxiste pas")
+    if not graphe.contient_sommet(arrivee) :
+        raise ValueError(f"Le sommet : {arrivee} n'esxiste pas")
+
+    # cas ou le depart et l'arrive sont identique
+    if depart == arrivee :
+        return ([depart], 0.0)
+
+    # on initialise les distance à l'infinie ce qui facilite les mise à jour des distances si on en a pas encore au début
+    distances = {}
+    predecesseurs = {}
+    for sommet in graphe.obtenir_sommet() :
+        distances[sommet] = float("inf")
+        predecesseurs[sommet] = None
+    distances[depart] = 0.0
+
+    non_visites = list(graphe.obtenir_sommet())
+
+    # boucle principale de Dijkstra
+    while len(non_visites) > 0 :
+        #trouver le sommet non visite avec la plus petite distance du sommet actuelle
+        sommet_actuel = None
+        plus_petite_distance = float("inf")
+        for s in non_visites :
+            if distances[s] < plus_petite_distance :
+                plus_petite_distance = distances[s]
+                sommet_actuel = s
+
+        # si aucun sommet n'est accessible ou si on est à l'arrive on arrete 
+        if sommet_actuel is None or sommet_actuel == arrivee :
+            break
+
+        non_visites.remove(sommet_actuel)
+
+        # mise à jour des distances des voisins 
+        voisins = graphe.obtenir_voisin(sommet_actuel)
+        for voisin, poids in voisins.items() :
+            if voisin in non_visites :
+                nouvelle_distance = distances[sommet_actuel] + poids
+                if nouvelle_distance < distances[voisin] :
+                    distances[voisin] = nouvelle_distance
+                    predecesseurs[voisin] = sommet_actuel
+
+    # verification si l'arrivee est atteignable 
+    if distances[arrivee] == float("inf") : 
+        return (None, float("inf"))
+
+    # reconstruction du chemin à l'envers 
+    chemin = []
+    courant = arrivee 
+    while courant is not None :
+        chemin.append(courant)
+        courant = predecesseurs[courant]
+    chemin.reverse()
+
+    return (chemin, distances[arrivee])
+
+     
