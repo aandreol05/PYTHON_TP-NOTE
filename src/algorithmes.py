@@ -23,3 +23,7 @@ def obtenir_predecesseur(graphe, sommet) :
 def degre_sortant(graphe, sommet) :
      """retourn le nombre d'arc successeur"""
      return len(obtenir_successeur(graphe, sommet))
+
+def degre_entrant(graphe, sommet) :
+     """retourn le nombre d'arc predecesseur"""
+     return len(obtenir_predecesseur(graphe, sommet))
