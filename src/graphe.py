@@ -118,7 +118,7 @@ def from_files(chemin) :
     lignes_propres = []
     for ligne in lignes :
         if ligne.strip() != "" :
-            lignes_propres.appends(ligne.strip())
+            lignes_propres.append(ligne.strip())
 
     if len(lignes_propres) == 0 :
         raise ValueError(f"Le fichier {chemin} est vide")
