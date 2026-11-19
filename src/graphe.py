@@ -49,7 +49,7 @@ class Graphe :
 
         if arc.origine not in self.communication :
             raise ValueError(f"Le sommet d'origine {arc.origine} n'existe pas")
-        if arc.destination not in self.comunication :
+        if arc.destination not in self.communication :
             raise ValueError(f"Le sommet destination {arc.destination} n'existe pas")
         if arc.destination in self.communication[arc.origine] :
             raise ValueError(f"L'arc {arc.origine} -> {arc.destination} existe déjà")
@@ -96,9 +96,9 @@ class Graphe :
                 liens = []
                 for desti, poids in voisins.items() :
                     liens.append(f"{desti} ({poids})")
-                texte += f" {sommet} -> " + ", ".joins(liens) + "\n"
+                texte += f" {sommet} -> " + ", ".join(liens) + "\n"
 
-        return texte.strip
+        return texte.strip()
 
 
 
