@@ -163,4 +163,22 @@ def shortest_path_avoiding(graphe, depart, arrivee , interdits) :
     
     return (chemin, distances[arrivee])
 
-     
+def intersections(graphe1, graphe2) :
+    """Permet d'avoir un graphe avec les sommets, les arc identiques entre graphe1 et graphe2"""
+
+    resultat = Graphe()
+
+    # ajouter le sommet dans resultat si un sommet est dzns les deux graphes
+    for sommet in graphe1.obtenir_sommet() :
+        if graphe2.contient_sommet(sommet) :
+            resultat.ajouter_sommet(sommet)
+    
+    # ajouter les arcs strictement identique entre les deux graphes
+    for sommet in resultat.obtenir_sommet() :
+        voisins_g1 = graphe1.obtenir_voisin(sommet)
+        for destination, poids in voisins_g1.items() :
+            if graphe2.contient_arc(sommet, destination) :
+                if graphe2.obtenir_poids(sommet, destination) == poids :
+                    resultat.ajouter_arc(sommet, destination, poids)
+
+    return resultat
