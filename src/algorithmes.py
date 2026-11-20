@@ -1,3 +1,5 @@
+from src.graphe import Graphe
+
 def obtenir_successeur(graphe, sommet) :
     """retourne la liste des sommets directemment accessible depuis 'sommets'"""
     if not graphe.contient_sommet(sommet) :
@@ -91,6 +93,74 @@ def shortest_path(graphe, depart, arrivee) :
         courant = predecesseurs[courant]
     chemin.reverse()
 
+    return (chemin, distances[arrivee])
+
+def shortest_path_avoiding(graphe, depart, arrivee , interdits) :
+    """Calculer le chemin le plus court en évitant les sommets dans interdit"""
+
+    if not graphe.contient_sommet(depart) :
+        raise ValueError(f"le sommet : {depart} n'existe pas")
+    if not graphe.contient_sommet(arrivee) :
+            raise ValueError(f"le sommet : {arrivee} n'existe pas")
+
+    # on verrifie que tous les sommet dans interdir existe 
+    for s in interdits :
+        if not graphe.contient_sommet(s) :
+            raise ValueError(f"Le sommet interdit : {s} n'existe pas")
+
+    # si le départ ou l'arrivee est dans inerdit alors aucun chemin possible
+    if depart in interdits or arrivee in interdits :
+        return (None, float("inf"))
+
+    if depart == arrivee :
+        return ([depart], 0.0)
+
+    # initialisation comme dans shortest_path
+    distances = {}
+    predecesseurs = {}
+    for sommet in graphe.obtenir_sommet() :
+        distances[sommet] = float("inf")
+        predecesseurs[sommet] = None
+    distances[depart] = 0.0
+
+    # on retire les sommets interdit 
+    non_visites = []
+    for sommet in graphe.obtenir_sommet() :
+        if not sommet in interdits :
+            non_visites.append(sommet)
+
+    # récupération du même code que dans la def shortest_path
+    while len(non_visites) > 0 :
+        sommet_actuel = None
+        plus_petite_distance = float("inf")
+        for s in non_visites :
+            if distances[s] < plus_petite_distance :
+                plus_petite_distance = distances[s]
+                sommet_actuel = s
+    
+        if sommet_actuel is None or sommet_actuel == arrivee :
+            break
+    
+        non_visites.remove(sommet_actuel)
+    
+        voisins = graphe.obtenir_voisin(sommet_actuel)
+        for voisin, poids in voisins.items() :
+            if voisin in non_visites :
+                nouvelle_distance = distances[sommet_actuel] + poids
+                if nouvelle_distance < distances[voisin] :
+                    distances[voisin] = nouvelle_distance
+                    predecesseurs[voisin] = sommet_actuel
+    
+    if distances[arrivee] == float("inf") : 
+        return (None, float("inf"))
+    
+    chemin = []
+    courant = arrivee 
+    while courant is not None :
+        chemin.append(courant)
+        courant = predecesseurs[courant]
+    chemin.reverse()
+    
     return (chemin, distances[arrivee])
 
      
