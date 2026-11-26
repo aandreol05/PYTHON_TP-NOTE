@@ -8,27 +8,31 @@ from src.algorithmes import (
     shortest_path,
     shortest_path_avoiding,
     intersections,
+    has_cycle,
+    topological_sort,
 )
 
 
 def afficher_menu():
-    print("\n" + "=" * 45)
-    print("       GESTIONNAIRE DE RÉSEAU ORIENTÉ")
-    print("=" * 45)
-    print("1. Charger un graphe depuis un fichier")
-    print("2. Afficher le graphe actuel")
-    print("3. Ajouter un sommet")
-    print("4. Ajouter un arc")
-    print("5. Analyser un sommet (degrés, voisins)")
-    print("6. Calculer le plus court chemin (Dijkstra)")
-    print("7. Plus court chemin avec sommets interdits")
-    print("8. Calculer l'intersection avec un autre fichier")
-    print("0. Quitter")
-    print("=" * 45)
+    print("\n" + "=" * 50)
+    print("         GESTIONNAIRE DE RÉSEAU ORIENTÉ")
+    print("=" * 50)
+    print("1.  Charger un graphe depuis un fichier")
+    print("2.  Afficher le graphe actuel")
+    print("3.  Ajouter un sommet")
+    print("4.  Ajouter un arc")
+    print("5.  Analyser un sommet (degrés, voisins)")
+    print("6.  Calculer le plus court chemin (Dijkstra)")
+    print("7.  Plus court chemin avec sommets interdits")
+    print("8.  Calculer l'intersection avec un autre fichier")
+    print("9.  Vérifier la présence d'un cycle (Bonus)")
+    print("10. Calculer l'ordre topologique (Bonus)")
+    print("0.  Quitter")
+    print("=" * 50)
 
 
 def main():
-    # On charge par défaut le réseau principal pour démarrer rapidement
+    # Chargement automatique du réseau par défaut au démarrage
     try:
         graphe = from_files("data/reseau.txt")
         print("Réseau par défaut 'data/reseau.txt' chargé.")
@@ -105,12 +109,22 @@ def main():
                 print("\n--- Graphe intersection ---")
                 print(g_inter)
 
+            elif choix == "9":
+                if has_cycle(graphe):
+                    print("Résultat : Le graphe contient au moins un cycle.")
+                else:
+                    print("Résultat : Le graphe est acyclique (aucun cycle détecté).")
+
+            elif choix == "10":
+                ordre = topological_sort(graphe)
+                print("Ordre topologique :", " -> ".join(ordre))
+
             elif choix == "0":
                 print("Fermeture du programme.")
                 break
 
             else:
-                print("Choix invalide, veuillez saisir un chiffre entre 0 et 8.")
+                print("Choix invalide, veuillez saisir un chiffre entre 0 et 10.")
 
         except (ValueError, FileNotFoundError) as erreur:
             print(f"\n[Erreur] {erreur}")
