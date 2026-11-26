@@ -182,3 +182,36 @@ def intersections(graphe1, graphe2) :
                     resultat.ajouter_arc(sommet, destination, poids)
 
     return resultat
+
+def topological_sort(graphe):
+    """Calcule un ordre topologique du graphe avec l'algorithme de Kahn"""
+
+    # calculer le degré entrant initial de chaque sommet
+    degres_entrants = {}
+    for sommet in graphe.obtenir_sommet():
+        degres_entrants[sommet] = degre_entrant(graphe, sommet)
+
+    # mettre dans la file tous les sommets sans prédécesseur (degré entrant == 0)
+    file_attente = []
+    for sommet, deg in degres_entrants.items():
+        if deg == 0:
+            file_attente.append(sommet)
+
+    ordre = []
+
+    # traiter les sommets un par un
+    while len(file_attente) > 0:
+        sommet_actuel = file_attente.pop(0)
+        ordre.append(sommet_actuel)
+
+        # On réduit de 1 le degré entrant de chaque successeur
+        for voisin in obtenir_successeur(graphe, sommet_actuel):
+            degres_entrants[voisin] = degres_entrants[voisin] - 1
+            if degres_entrants[voisin] == 0:
+                file_attente.append(voisin)
+
+    # si tous les sommets n'ont pas été traités, il y a un cycle
+    if len(ordre) != len(graphe.obtenir_sommet()):
+        raise ValueError("Impossible de calculer un ordre topologique : le graphe contient un cycle.")
+
+    return ordre
