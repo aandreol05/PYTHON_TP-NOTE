@@ -215,3 +215,13 @@ def topological_sort(graphe):
         raise ValueError("Impossible de calculer un ordre topologique : le graphe contient un cycle.")
 
     return ordre
+
+def has_cycle(graphe):
+    """
+    Retourne True si le graphe orienté contient au moins un cycle, False sinon.
+    """
+    try:
+        topological_sort(graphe)
+        return False
+    except ValueError:
+        return True
